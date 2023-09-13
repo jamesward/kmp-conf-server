@@ -1,0 +1,39 @@
+on: push
+
+jobs:
+  build:
+    name: build-and-deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0.2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Create & Publish Container
+        run: |
+          gcloud auth configure-docker
+          ./gradlew jibDockerBuild --image=gcr.io/${{ secrets.GCP_PROJECT }}/${{ github.event.repository.name }}:${{ github.sha }}
+          docker push gcr.io/${{ secrets.GCP_PROJECT }}/${{ github.event.repository.name }}:${{ github.sha }}
+
+      - name: Deploy Service
+        uses: jamesward/easycloudrun/deploy@main
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+          COMMIT_SHA: ${{ github.sha }}
+          IMAGE_NAME: ${{ github.event.repository.name }}
+          IMAGE_VERSION: ${{ github.sha }}
+          REGION: us-central1
