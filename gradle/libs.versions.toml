@@ -6,7 +6,7 @@ ktor = "2.3.4"
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-jib = { id = "com.google.cloud.tools.jib", version = "3.3.2" }
+jib = { id = "com.google.cloud.tools.jib", version = "3.4.0" }
 
 [libraries]
 jib-native-image-extension = { module = "com.google.cloud.tools:jib-native-image-extension-gradle", version = "0.1.0" }
