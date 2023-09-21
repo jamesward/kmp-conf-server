@@ -33,21 +33,21 @@ jobs:
 
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0.2
-        if: ${{ steps.secret-check.outputs.available != 'true' }}
+        if: ${{ steps.secret-check.outputs.available == 'true' }}
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
 
       - name: Push Container
-        if: ${{ steps.secret-check.outputs.available != 'true' }}
+        if: ${{ steps.secret-check.outputs.available == 'true' }}
         run: |
           gcloud auth configure-docker
           docker push gcr.io/${{ secrets.GCP_PROJECT }}/${{ github.event.repository.name }}:${{ github.sha }}
 
       - name: Deploy Service
         uses: jamesward/easycloudrun/deploy@main
-        if: ${{ steps.secret-check.outputs.available != 'true' }}
+        if: ${{ steps.secret-check.outputs.available == 'true' }}
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT }}
           COMMIT_SHA: ${{ github.sha }}
