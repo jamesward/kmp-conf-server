@@ -2,10 +2,8 @@ rootProject.name = "kmp-conf-server"
 
 pluginManagement {
     repositories {
-        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
-        maven("https://oss.sonatype.org/content/groups/staging")  // since mavenCentral takes a little while
     }
 }
 
