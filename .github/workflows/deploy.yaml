@@ -23,7 +23,7 @@ jobs:
           ./gradlew jibDockerBuild --image=gcr.io/$PROJECT/${{ github.event.repository.name }}:${{ github.sha }}
 
       - id: secret-check
-        name: Check for Secret availability
+        name: Check for Secret Availability
         run: |
           if [ "${{ secrets.GCP_PROJECT }}" != '' ] && [ "${{ secrets.GCP_CREDENTIALS }}" != '' ]; then
             echo "available=true" >> $GITHUB_OUTPUT;

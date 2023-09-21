@@ -1,13 +1,13 @@
 buildscript {
     dependencies {
-        classpath(libs.jib.native.image.extension)
+        classpath(universe.jib.native.image.extension)
     }
 }
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.plugin.serialization)
-    alias(libs.plugins.jib)
+    alias(universe.plugins.kotlin.multiplatform)
+    alias(universe.plugins.kotlin.plugin.serialization)
+    alias(universe.plugins.jib)
 }
 
 repositories {
@@ -28,12 +28,12 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.ktor.server.core)
-                implementation(libs.ktor.server.cio)
-                implementation(libs.ktor.server.content.negotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
-                implementation(libs.arrow.kt.suspendapp)
-                implementation(libs.arrow.kt.suspendapp.ktor)
+                implementation(universe.ktor.server.core)
+                implementation(universe.ktor.server.cio)
+                implementation(universe.ktor.server.content.negotiation)
+                implementation(universe.ktor.serialization.kotlinx.json)
+                implementation(universe.arrow.kt.suspendapp)
+                implementation(universe.arrow.kt.suspendapp.ktor)
             }
         }
     }
