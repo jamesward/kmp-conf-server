@@ -9,28 +9,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v0.2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          export_default_credentials: true
-
-      - name: setup java
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '17'
           cache: 'gradle'
 
-      - name: Create & Publish Container
+      - name: Create Container
+        env:
+          PROJECT: ${{ secrets.GCP_PROJECT || github.actor }}
+        run: |
+          ./gradlew jibDockerBuild --image=gcr.io/$PROJECT/${{ github.event.repository.name }}:${{ github.sha }}
+
+      - id: secret-check
+        name: Check for Secret availability
+        run: |
+          if [ "${{ secrets.GCP_PROJECT }}" != '' ] && [ "${{ secrets.GCP_CREDENTIALS }}" != '' ]; then
+            echo "available=true" >> $GITHUB_OUTPUT;
+          else
+            echo "available=false" >> $GITHUB_OUTPUT;
+          fi
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0.2
+        if: ${{ steps.secret-check.outputs.available != 'true' }}
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Push Container
+        if: ${{ steps.secret-check.outputs.available != 'true' }}
         run: |
           gcloud auth configure-docker
-          ./gradlew jibDockerBuild --image=gcr.io/${{ secrets.GCP_PROJECT }}/${{ github.event.repository.name }}:${{ github.sha }}
           docker push gcr.io/${{ secrets.GCP_PROJECT }}/${{ github.event.repository.name }}:${{ github.sha }}
 
       - name: Deploy Service
         uses: jamesward/easycloudrun/deploy@main
+        if: ${{ steps.secret-check.outputs.available != 'true' }}
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT }}
           COMMIT_SHA: ${{ github.sha }}
