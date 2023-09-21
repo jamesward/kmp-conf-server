@@ -18,7 +18,7 @@ jobs:
 
       - name: Create Container
         env:
-          PROJECT: ${{ secrets.GCP_PROJECT || github.event.org.login }}
+          PROJECT: ${{ secrets.GCP_PROJECT || github.event.id }}
         run: |
           ./gradlew jibDockerBuild --image=gcr.io/$PROJECT/${{ github.event.repository.name }}:${{ github.sha }}
 
