@@ -32,7 +32,7 @@ jobs:
           fi
 
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v0.2
+        uses: google-github-actions/setup-gcloud@v0.3
         if: ${{ steps.secret-check.outputs.available == 'true' }}
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
